@@ -1,0 +1,18 @@
+Package: twproject
+Type: Package
+Title: Project management with 'TiddlyWiki'
+Version: 0.3.0
+Author: Bangyou Zheng
+Maintainer: Bangyou Zheng <Bangyou.Zheng@csiro.au>
+Description: 'TiddlyWiki' is a unique non-linear notebook for capturing, organising and sharing complex information. 'twproject' is a R interface of project management with 'TiddlyWiki' <https://tiddlywiki.com>.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+URL: https://twproject.bangyou.me/,
+    https://github.com/byzheng/twproject
+BugReports: https://github.com/byzheng/twproject/issues
+Imports:
+    tidyr,
+    rtiddlywiki,
+    tibble
+RoxygenNote: 7.3.1
