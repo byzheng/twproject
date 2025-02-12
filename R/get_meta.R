@@ -11,7 +11,7 @@
 #' @param project A character string specifying the project name. Must be a single value.
 #' @param standard_name A logical indicating whether to assign a standard name based on `aka` values. Default is TRUE.
 #'
-#' @return A list of tibbles containing filtered metadata for the project.
+#' @return A list containing filtered metadata for the project.
 #' @export
 get_meta <- function(project, standard_name = TRUE) {
     # Ensure input validity
@@ -42,19 +42,19 @@ get_meta <- function(project, standard_name = TRUE) {
         tiddlers_i <- rtiddlywiki::get_tiddlers(filter_i)
 
         # Convert retrieved tiddlers into a tibble format
-        values_i <- tibble::tibble(repo = tiddlers_i) |>
-            tidyr::unnest_wider("repo")
-
+        # values_i <- tibble::tibble(repo = tiddlers_i) |>
+        #     tidyr::unnest_wider("repo")
+        values_i <- tiddlers_i
         # Remove the revision column if present
-        values_i$revision <- NULL
+        #values_i$revision <- NULL
 
-        # Ensure `standard_name` is not an existing field
-        if ("standard_name" %in% names(values_i)) {
-            stop("standard_name is not allowed in the fields")
-        }
+        # # Ensure `standard_name` is not an existing field
+        # if ("standard_name" %in% names(values_i)) {
+        #     stop("standard_name is not allowed in the fields")
+        # }
 
         # Add an empty `standard_name` column
-        values_i$standard_name <- NA
+        #values_i$standard_name <- NA
 
         # If standard_name mapping is not required, store results and continue
         if (!standard_name) {
@@ -63,8 +63,8 @@ get_meta <- function(project, standard_name = TRUE) {
         }
 
         # Assign standard names based on `aka` field
-        for (j in seq(along = values_i[[1]])) {
-            filter_j <- sprintf("[tag[%s]aka[%s]]", values_i$type[j], values_i$id[j])
+        for (j in seq(along = values_i)) {
+            filter_j <- sprintf("[tag[%s]aka[%s]]", values_i[[j]]$type, values_i[[j]]$id)
             tiddler_j <- rtiddlywiki::get_tiddlers(filter_j)
 
             # Ensure a unique standard name is found
@@ -74,7 +74,7 @@ get_meta <- function(project, standard_name = TRUE) {
 
             # Assign standard name if available
             if (length(tiddler_j) == 1) {
-                values_i$standard_name[j] <- tiddler_j[[1]]$title
+                values_i[[j]]$standard_name <- tiddler_j[[1]]$title
             }
         }
 

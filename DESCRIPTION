@@ -12,8 +12,6 @@ URL: https://twproject.bangyou.me/,
     https://github.com/byzheng/twproject
 BugReports: https://github.com/byzheng/twproject/issues
 Imports:
-    tidyr,
     rtiddlywiki,
-    tibble,
     here
 RoxygenNote: 7.3.1
