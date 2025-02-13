@@ -58,7 +58,7 @@ get_meta <- function(project, standard_name = TRUE) {
 
         # If standard_name mapping is not required, store results and continue
         if (!standard_name) {
-            res[[i]] <- values_i
+            res[[names_filter[i]]] <- values_i
             next
         }
 
