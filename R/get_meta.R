@@ -18,6 +18,8 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE) {
     # Ensure input validity
     stopifnot(length(project) == 1)
     stopifnot(is.character(project))
+    stopifnot(length(as_tibble) == 1)
+    stopifnot(is.logical(as_tibble))
     stopifnot(length(standard_name) == 1)
     stopifnot(is.logical(standard_name))
 
@@ -65,7 +67,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE) {
 
         # Assign standard names based on `aka` field
         for (j in seq(along = values_i)) {
-            filter_j <- sprintf("[tag[%s]aka[%s]]", values_i[[j]]$type, values_i[[j]]$id)
+            filter_j <- sprintf("[tag[%s]aka[%s]]", values_i[[j]]$group, values_i[[j]]$id)
             tiddler_j <- rtiddlywiki::get_tiddlers(filter_j)
 
             # Ensure a unique standard name is found

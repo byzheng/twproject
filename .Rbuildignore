@@ -1,3 +1,15 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^codecov\.yml$
+^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^examples$
+cran-comments.md
+^CRAN-SUBMISSION$
+.*\\.json
+.*\\.md
+^tw-test
+tw-test.bat
 .tw
