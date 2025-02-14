@@ -9,11 +9,12 @@
 #' to a standard name based on an alias (`aka` field).
 #'
 #' @param project A character string specifying the project name. Must be a single value.
+#' @param as_tibble A logical indicating whether to convert into table. Default is TRUE.
 #' @param standard_name A logical indicating whether to assign a standard name based on `aka` values. Default is TRUE.
 #'
 #' @return A list containing filtered metadata for the project.
 #' @export
-get_meta <- function(project, standard_name = TRUE) {
+get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE) {
     # Ensure input validity
     stopifnot(length(project) == 1)
     stopifnot(is.character(project))
@@ -81,6 +82,12 @@ get_meta <- function(project, standard_name = TRUE) {
         # Store processed values
         res[[names_filter[i]]] <- values_i
     }
-
+    if (as_tibble) {
+        for (i in seq(along = res)) {
+            # Convert retrieved tiddlers into a tibble format
+            res[[i]] <- tibble::tibble(repo = res[[i]]) |>
+                tidyr::unnest_wider("repo")
+        }
+    }
     return(res)
 }

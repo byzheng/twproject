@@ -4,10 +4,12 @@
 \alias{load_meta}
 \title{Load Metadata}
 \usage{
-load_meta(project, update = FALSE)
+load_meta(project, as_tibble = TRUE, update = FALSE)
 }
 \arguments{
 \item{project}{A character string representing the project name.}
+
+\item{as_tibble}{A logical indicating whether to convert into table. Default is TRUE.}
 
 \item{update}{A logical flag; if TRUE, refreshes the metadata cache.}
 }

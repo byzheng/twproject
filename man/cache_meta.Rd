@@ -4,10 +4,12 @@
 \alias{cache_meta}
 \title{Cache Metadata}
 \usage{
-cache_meta(project)
+cache_meta(project, as_tibble = TRUE)
 }
 \arguments{
 \item{project}{A character string representing the project name.}
+
+\item{as_tibble}{A logical indicating whether to convert into table. Default is TRUE.}
 }
 \value{
 None. The function saves the metadata to a file.

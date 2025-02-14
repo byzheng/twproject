@@ -4,10 +4,12 @@
 \alias{get_meta}
 \title{Save Metadata for a project from TiddlyWiki}
 \usage{
-get_meta(project, standard_name = TRUE)
+get_meta(project, as_tibble = TRUE, standard_name = TRUE)
 }
 \arguments{
 \item{project}{A character string specifying the project name. Must be a single value.}
+
+\item{as_tibble}{A logical indicating whether to convert into table. Default is TRUE.}
 
 \item{standard_name}{A logical indicating whether to assign a standard name based on `aka` values. Default is TRUE.}
 }
