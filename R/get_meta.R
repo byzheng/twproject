@@ -78,6 +78,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE) {
             # Assign standard name if available
             if (length(tiddler_j) == 1) {
                 values_i[[j]]$standard_name <- tiddler_j[[1]]$title
+                values_i[[j]]$project_name <- ifelse(is.na(tiddler_j[[1]]$title), values_i[[j]]$id, tiddler_j[[1]]$title)
             }
         }
 
@@ -89,6 +90,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE) {
             # Convert retrieved tiddlers into a tibble format
             res[[i]] <- tibble::tibble(repo = res[[i]]) |>
                 tidyr::unnest_wider("repo")
+
         }
     }
     return(res)

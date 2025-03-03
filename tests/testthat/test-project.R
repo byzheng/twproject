@@ -27,6 +27,7 @@ test_that("tiddler", {
     expect_equal(meta[[1]]$id[1], "variety1")
     expect_equal(meta[[1]]$group[1], "Variety")
     expect_equal(meta[[1]]$standard_name[1], "Variety 1")
+    expect_equal(meta[[1]]$project_name[1], "Variety 1")
 
     meta <- get_meta("project1", as_tibble = FALSE)
     expect_equal(length(meta), 1)
