@@ -11,6 +11,11 @@ test_that("tiddler", {
                                                project = "project1",
                                                id = id))
     }
+    id <- sprintf("variety%s", 11)
+    rtiddlywiki::put_tiddler(sprintf("project1/%s", id), text="", tags = c("Project Link", "test"),
+                             fields = list(group = "Variety",
+                                           project = "project1",
+                                           id = id))
     for (i in seq_len(10)) {
         id <- sprintf("Variety %s", i)
         id_aka <- sprintf("variety%s", i)
@@ -23,15 +28,16 @@ test_that("tiddler", {
 
     meta <- get_meta("project1")
     expect_equal(length(meta), 1)
-    expect_equal(nrow(meta[[1]]), 10)
+    expect_equal(nrow(meta[[1]]), 11)
     expect_equal(meta[[1]]$id[1], "variety1")
     expect_equal(meta[[1]]$group[1], "Variety")
     expect_equal(meta[[1]]$standard_name[1], "Variety 1")
     expect_equal(meta[[1]]$project_name[1], "Variety 1")
+    expect_equal(meta[[1]]$project_name[3], "variety11")
 
     meta <- get_meta("project1", as_tibble = FALSE)
     expect_equal(length(meta), 1)
-    expect_equal(length(meta[[1]]), 10)
+    expect_equal(length(meta[[1]]), 11)
 
     # Clean tiddlers
     tiddlers <- rtiddlywiki::get_tiddlers("[tag[test]]")
