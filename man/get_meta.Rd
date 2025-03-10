@@ -4,7 +4,7 @@
 \alias{get_meta}
 \title{Save Metadata for a project from TiddlyWiki}
 \usage{
-get_meta(project, as_tibble = TRUE, standard_name = TRUE)
+get_meta(project, as_tibble = TRUE, standard_name = TRUE, apsim_name = TRUE)
 }
 \arguments{
 \item{project}{A character string specifying the project name. Must be a single value.}
@@ -12,6 +12,8 @@ get_meta(project, as_tibble = TRUE, standard_name = TRUE)
 \item{as_tibble}{A logical indicating whether to convert into table. Default is TRUE.}
 
 \item{standard_name}{A logical indicating whether to assign a standard name based on `aka` values. Default is TRUE.}
+
+\item{apsim_name}{A logical indicating whether to retrieve names for APSIM. The id is used if missing}
 }
 \value{
 A list containing filtered metadata for the project.

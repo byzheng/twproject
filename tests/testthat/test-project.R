@@ -18,10 +18,18 @@ test_that("tiddler", {
                                            id = id))
     for (i in seq_len(10)) {
         id <- sprintf("Variety %s", i)
-        id_aka <- sprintf("variety%s", i)
+        id_aka <- c(sprintf("variety%s", i), sprintf("apsim_variety%s", i))
         rtiddlywiki::put_tiddler(id, text="", tags = c("Variety", "test"),
-                                 fields = list(aka = id_aka))
+                                 fields = list(aka = id_aka, crop = "Wheat"))
     }
+
+    # Add apsim
+    rtiddlywiki::put_tiddler("data/apsimng/parameter/Wheat/variety1", text="", tags = c("APSIM NG", "Wheat", "test"),
+                             fields = list(cultivar = "apsim_Variety1", crop = "Wheat"))
+
+    rtiddlywiki::put_tiddler("data/apsimng/parameter/Wheat/variety2", text="", tags = c("APSIM NG", "Wheat", "test"),
+                             fields = list(cultivar = "apsim_Variety2", crop = "Wheat"))
+
 
     expect_error(get_meta(c("project1", "project2")))
     expect_error(get_meta("project"))
@@ -34,6 +42,10 @@ test_that("tiddler", {
     expect_equal(meta[[1]]$standard_name[1], "Variety 1")
     expect_equal(meta[[1]]$preferred_name[1], "Variety 1")
     expect_equal(meta[[1]]$preferred_name[3], "variety11")
+
+    expect_equal(meta[[1]]$apsim_name[1], "apsim_Variety1")
+    expect_equal(meta[[1]]$apsim_name[2], "variety10")
+
 
     meta <- get_meta("project1", as_tibble = FALSE)
     expect_equal(length(meta), 1)
