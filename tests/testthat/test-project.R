@@ -4,7 +4,9 @@ test_that("tiddler", {
     rtiddlywiki::put_tiddler("project1", text="", tags = c("Project", "test"))
     rtiddlywiki::put_tiddler("project1/filter", text="", tags = c("Project Filter", "project1", "test"),
                              fields = list(`filter-variety` = "[tag[Project Link]field:group[Variety]field:project[project1]]"))
-    for (i in seq_len(10)) {
+
+
+    for (i in c(0, seq_len(10))) {
         id <- sprintf("variety%s", i)
         rtiddlywiki::put_tiddler(sprintf("project1/%s", id), text="", tags = c("Project Link", "test"),
                                  fields = list(group = "Variety",
@@ -36,20 +38,20 @@ test_that("tiddler", {
 
     meta <- get_meta("project1")
     expect_equal(length(meta), 1)
-    expect_equal(nrow(meta[[1]]), 11)
-    expect_equal(meta[[1]]$id[1], "variety1")
-    expect_equal(meta[[1]]$group[1], "Variety")
-    expect_equal(meta[[1]]$standard_name[1], "Variety 1")
-    expect_equal(meta[[1]]$preferred_name[1], "Variety 1")
-    expect_equal(meta[[1]]$preferred_name[3], "variety11")
+    expect_equal(nrow(meta[[1]]), 12)
+    expect_equal(meta[[1]]$id[2], "variety1")
+    expect_equal(meta[[1]]$group[2], "Variety")
+    expect_equal(meta[[1]]$standard_name[2], "Variety 1")
+    expect_equal(meta[[1]]$preferred_name[2], "Variety 1")
+    expect_equal(meta[[1]]$preferred_name[4], "variety11")
 
-    expect_equal(meta[[1]]$apsim_name[1], "apsim_Variety1")
-    expect_equal(meta[[1]]$apsim_name[2], "variety10")
+    expect_equal(meta[[1]]$apsim_name[2], "apsim_Variety1")
+    expect_equal(meta[[1]]$apsim_name[3], "variety10")
 
 
     meta <- get_meta("project1", as_tibble = FALSE)
     expect_equal(length(meta), 1)
-    expect_equal(length(meta[[1]]), 11)
+    expect_equal(length(meta[[1]]), 12)
 
     # Clean tiddlers
     tiddlers <- rtiddlywiki::get_tiddlers("[tag[test]]")
