@@ -64,6 +64,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
 
             # Assign standard name if available
             if (length(tiddler_j) != 1) {
+                values_i[[j]]$standard_name <- NA
                 values_i[[j]]$preferred_name <- values_i[[j]]$id
                 values_i[[j]]$apsim_name <- values_i[[j]]$id
                 next
