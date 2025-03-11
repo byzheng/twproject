@@ -44,8 +44,11 @@ test_that("tiddler", {
     expect_equal(meta[[1]]$standard_name[2], "Variety 1")
     expect_equal(meta[[1]]$preferred_name[2], "Variety 1")
     expect_equal(meta[[1]]$preferred_name[4], "variety11")
+    expect_equal(meta[[1]]$preferred_name[5], "Variety 2")
+    expect_equal(meta[[1]]$preferred_name[6], "Variety 3")
 
     expect_equal(meta[[1]]$apsim_name[2], "apsim_Variety1")
+    expect_equal(meta[[1]]$apsim_name[5], "apsim_Variety2")
     expect_equal(meta[[1]]$apsim_name[3], "variety10")
 
 

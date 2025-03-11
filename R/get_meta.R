@@ -84,7 +84,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
                     }
 
                     # Assign values if find
-                    values_i[[k]]$standard_name <- tiddler_j[[1]]$title
+                    values_i[[k]]$standard_name <- tiddler_j[[m]]$title
                     values_i[[k]]$preferred_name <- values_i[[k]]$standard_name
                     # Break if no apsim name
                     if (!apsim_name) {
