@@ -38,6 +38,13 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
         stop("No filter is defined for project ", project)
     }
 
+
+    # for all apsim tiddlers
+    if (standard_name && apsim_name) {
+        filter_apsim_j <- sprintf("[tag[APSIM NG]has[crop]!is[system]]")
+        apsim_tiddlers <- rtiddlywiki::get_tiddlers(filter_apsim_j)
+    }
+
     # Initialize result list
     res <- list()
     i <- 1
@@ -51,40 +58,67 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
             res[[names_filter[i]]] <- values_i
             next
         }
+        # Get standard name
+        groups <- purrr::map_chr(values_i, function(x) x$group) |> unique()
+
+        # Get all groups from meta data
         j <- 1
-        # Assign standard names based on `aka` field
-        for (j in seq(along = values_i)) {
-            filter_j <- sprintf("[tag[%s]matchaka[%s]]", values_i[[j]]$group, values_i[[j]]$id)
+        for (j in seq(along = groups)) {
+            # Obtain all tiddlers for this group
+            filter_j <- sprintf("[tag[%s]]", groups[j])
             tiddler_j <- rtiddlywiki::get_tiddlers(filter_j)
+            names_j <- list()
+            # Split aka field and loop through group tiddlers
+            m <- 1
+            for (m in seq(along = tiddler_j)) {
+                names_m <- c(tiddler_j[[m]]$title,
+                    rtiddlywiki::split_field(tiddler_j[[m]]$aka)) |>
+                    unique() |>
+                    tolower()
+                # match id with aka field
+                k <- 1
+                for (k in seq(along = values_i)) {
+                    # go to next if not find
+                    if (!(tolower(values_i[[k]]$id) %in% names_m)) {
+                        next
+                    }
 
-            # Ensure a unique standard name is found
-            if (length(tiddler_j) > 1) {
-                stop("Multiple standard names are found")
-            }
+                    # Assign values if find
+                    values_i[[k]]$standard_name <- tiddler_j[[1]]$title
+                    values_i[[k]]$preferred_name <- values_i[[k]]$standard_name
+                    # Break if no apsim name
+                    if (!apsim_name) {
+                        break
+                    }
+                    # Get apsim name
 
-            # Assign standard name if available
-            if (length(tiddler_j) != 1) {
-                values_i[[j]]$standard_name <- NA
-                values_i[[j]]$preferred_name <- values_i[[j]]$id
-                values_i[[j]]$apsim_name <- values_i[[j]]$id
-                next
-            }
-            values_i[[j]]$standard_name <- tiddler_j[[1]]$title
-            values_i[[j]]$preferred_name <- values_i[[j]]$standard_name
-            if (apsim_name) {
-                all_names <- c(tiddler_j[[1]]$title,
-                               rtiddlywiki::split_field(tiddler_j[[1]]$aka)) |>
-                    unique()
-                a_name <- .get_apsim_name(tiddler_j[[1]]$crop,
-                                          all_names)
-                if (is.null(a_name)) {
-                    values_i[[j]]$apsim_name <- values_i[[j]]$id
-                } else {
-                    values_i[[j]]$apsim_name <- a_name
+                    n <- 1
+                    for (n in seq(along = apsim_tiddlers)) {
+                        if (!(tolower(apsim_tiddlers[[n]]$cultivar) %in% names_m)) {
+                            next
+                        }
+                        values_i[[k]]$apsim_name <- apsim_tiddlers[[n]]$cultivar
+                        break
+                    }
+                    break
+
                 }
+
             }
+
         }
 
+        # update preferred_name and apsim_name
+
+        for (k in seq(along = values_i)) {
+            if ((is.null(values_i[[k]]$preferred_name))) {
+                values_i[[k]]$preferred_name <- values_i[[k]]$id
+            }
+
+            if ((is.null(values_i[[k]]$apsim_name))) {
+                values_i[[k]]$apsim_name <- values_i[[k]]$id
+            }
+        }
         # Store processed values
         res[[names_filter[i]]] <- values_i
     }
