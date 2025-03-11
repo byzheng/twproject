@@ -41,7 +41,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
 
     # for all apsim tiddlers
     if (standard_name && apsim_name) {
-        filter_apsim_j <- sprintf("[tag[APSIM NG]has[crop]!is[system]]")
+        filter_apsim_j <- sprintf("[tag[APSIM NG]has[cultivar]!is[system]]")
         apsim_tiddlers <- rtiddlywiki::get_tiddlers(filter_apsim_j)
     }
 
