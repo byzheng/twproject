@@ -65,7 +65,9 @@ test_that("tiddler", {
     expect_equal(meta[[1]]$apsim_name[2], "apsim_Variety1")
     expect_equal(meta[[1]]$apsim_name[5], "apsim_Variety2")
     expect_equal(meta[[1]]$apsim_name[3], "variety10")
-
+    expect_equal(meta[[1]]$in_apsim[2], TRUE)
+    expect_equal(meta[[1]]$in_apsim[5], TRUE)
+    expect_equal(meta[[1]]$in_apsim[3], FALSE)
 
     meta <- get_meta("project1", as_tibble = FALSE)
     expect_equal(length(meta), 1)

@@ -114,6 +114,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
                             next
                         }
                         values_i[[k]]$apsim_name <- apsim_tiddlers[[n]]$cultivar
+                        values_i[[k]]$in_apsim <- TRUE
                         break
                     }
                     break
@@ -133,6 +134,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
 
             if ((is.null(values_i[[k]]$apsim_name))) {
                 values_i[[k]]$apsim_name <- values_i[[k]]$id
+                values_i[[k]]$in_apsim <- FALSE
             }
         }
         # Store processed values
