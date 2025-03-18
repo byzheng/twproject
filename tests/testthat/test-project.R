@@ -49,8 +49,10 @@ test_that("tiddler", {
                              fields = list(cultivar = "apsim_Variety2", crop = "Wheat"))
 
 
+    # standard_name
 
-
+    sname <- standard_name(paste0("variety", seq(1, 11)), "Variety")
+    expect_equal(c(paste0("Variety ", seq(1, 10)), NA), sname)
     meta <- get_meta("project1")
     expect_equal(length(meta), 1)
     expect_equal(nrow(meta[[1]]), 12)
