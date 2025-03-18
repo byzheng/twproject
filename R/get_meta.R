@@ -27,16 +27,12 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
 
     # Define filter string to retrieve project-specific tiddlers
     filter <- sprintf("[tag[Project Filter]tag[%s]]", project)
-    filter_tiddler <- rtiddlywiki::get_tiddlers(filter = filter)
-    stopifnot(length(filter_tiddler) == 1) # Ensure exactly one tiddler is retrieved
-    filter_tiddler <- filter_tiddler[[1]]
+    filter_tiddlers <- rtiddlywiki::get_tiddlers(filter = filter)
 
-    # Extract relevant filter fields
-    names_filter <- names(filter_tiddler)
-    names_filter <- names_filter[grepl("^filter-", names_filter)]
-    if (length(names_filter) == 0) {
-        stop("No filter is defined for project ", project)
+    if (length(filter_tiddlers) == 0) {
+        stop("Cannot find any filters for project: ", project)
     }
+
 
 
     # for all apsim tiddlers
@@ -45,17 +41,37 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
         apsim_tiddlers <- rtiddlywiki::get_tiddlers(filter_apsim_j)
     }
 
-    # Initialize result list
     res <- list()
+
     i <- 1
-    # Loop through each filter field
-    for (i in seq(along = names_filter)) {
-        filter_i <- filter_tiddler[[names_filter[i]]]
+    for (i in seq(along = filter_tiddlers)) {
+        filter_tiddler <- filter_tiddlers[[i]]
+
+        # Extract relevant filter fields
+        names_filter <- names(filter_tiddler)
+        if (is.null(filter_tiddler$filter)) {
+            warning("Field filter is not defined for ", filter_tiddler$title)
+            next
+        }
+
+
+
+        filter_i <- filter_tiddler$filter
         tiddlers_i <- rtiddlywiki::get_tiddlers(filter_i)
 
         values_i <- tiddlers_i
+        # update extra values: category and subcategory
+        j <- 1
+        for (j in seq(along = values_i)) {
+            if (!is.null(filter_tiddler$category)) {
+                values_i[[j]]$category <- filter_tiddler$category
+            }
+            if (!is.null(filter_tiddler$subcategory)) {
+                values_i[[j]]$subcategory <- filter_tiddler$subcategory
+            }
+        }
         if (!standard_name) {
-            res[[names_filter[i]]] <- values_i
+            res[[filter_tiddler$title]] <- values_i
             next
         }
         # Get standard name
@@ -120,7 +136,7 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
             }
         }
         # Store processed values
-        res[[names_filter[i]]] <- values_i
+        res[[filter_tiddler$title]] <- values_i
     }
     if (as_tibble) {
         for (i in seq(along = res)) {

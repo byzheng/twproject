@@ -1,20 +1,36 @@
 test_that("tiddler", {
     skip_if(!is_test_tw())
-    # Inject data to retrieve
+
+    # Test errors
+    expect_error(get_meta(c("project1", "project2")))
+    expect_error(get_meta("project"))
+
+
+    # Test warning
+    rtiddlywiki::put_tiddler("project2/filter/variety/wheat", text="", tags = c("Project Filter", "project2", "test"),
+                             fields = list(category = "variety",
+                                           subcategory = "wheat"))
+
+    expect_warning(get_meta("project2"))
+
+
+    # Test meta data
     rtiddlywiki::put_tiddler("project1", text="", tags = c("Project", "test"))
     rtiddlywiki::put_tiddler("project1/filter", text="", tags = c("Project Filter", "project1", "test"),
-                             fields = list(`filter-variety` = "[tag[Project Link]field:group[Variety]field:project[project1]]"))
+                             fields = list(`filter` = "[tag[Project Meta]field:group[Variety]field:project[project1]]",
+                                           category = "variety",
+                                           subcategory = "wheat"))
 
 
     for (i in c(0, seq_len(10))) {
         id <- sprintf("variety%s", i)
-        rtiddlywiki::put_tiddler(sprintf("project1/%s", id), text="", tags = c("Project Link", "test"),
+        rtiddlywiki::put_tiddler(sprintf("project1/%s", id), text="", tags = c("Project Meta", "test"),
                                  fields = list(group = "Variety",
                                                project = "project1",
                                                id = id))
     }
     id <- sprintf("variety%s", 11)
-    rtiddlywiki::put_tiddler(sprintf("project1/%s", id), text="", tags = c("Project Link", "test"),
+    rtiddlywiki::put_tiddler(sprintf("project1/%s", id), text="", tags = c("Project Meta", "test"),
                              fields = list(group = "Variety",
                                            project = "project1",
                                            id = id))
@@ -33,8 +49,7 @@ test_that("tiddler", {
                              fields = list(cultivar = "apsim_Variety2", crop = "Wheat"))
 
 
-    expect_error(get_meta(c("project1", "project2")))
-    expect_error(get_meta("project"))
+
 
     meta <- get_meta("project1")
     expect_equal(length(meta), 1)
