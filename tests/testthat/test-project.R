@@ -51,18 +51,25 @@ test_that("tiddler", {
 
 
     # Generate Place
+    latitude <- -34
+    longitude <- 147
     for (i in seq_len(10)) {
         id <- sprintf("Place %s", i)
         id_aka <- c(sprintf("place%s", i))
         rtiddlywiki::put_tiddler(id, text="", tags = c("Place", "test"),
-                                 fields = list(aka = id_aka, point = "-34, 147"))
+                                 fields = list(aka = id_aka,
+                                               point = paste(latitude + i, longitude + i, sep = ", ")))
     }
     for (i in c(0, seq_len(10))) {
         id <- sprintf("place%s", i)
-        rtiddlywiki::put_tiddler(sprintf("project1/%s", id), text="", tags = c("Project Meta", "test"),
+        pid <- sprintf("[[Place %s]]", i)
+        rtiddlywiki::put_tiddler(sprintf("project1/%s", id),
+                                 text="",
+                                 tags = c("Project Meta", "test"),
                                  fields = list(group = "Place",
                                                project = "project1",
-                                               id = id))
+                                               id = id,
+                                               place = pid))
     }
 
     rtiddlywiki::put_tiddler("project1/filter/place", text="", tags = c("Project Filter", "project1", "test"),
@@ -114,6 +121,11 @@ test_that("tiddler", {
     expect_equal(meta_place$standard_name[2], "Place 1")
     expect_equal(meta_place$preferred_name[2], "Place 1")
     expect_equal(meta_place$preferred_name[4], "Place 2")
+    expect_equal(meta_place$latitude[1], NA_integer_)
+    expect_equal(meta_place$longitude[1], NA_integer_)
+    expect_equal(meta_place$latitude[2], -33)
+    expect_equal(meta_place$longitude[2], 148)
+
 
     # Clean tiddlers
     tiddlers <- rtiddlywiki::get_tiddlers("[tag[test]]")

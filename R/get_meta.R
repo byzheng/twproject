@@ -142,6 +142,43 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
                 }
             }
         }
+        # Get coordinate of Place
+        if (group == "Place") {
+            place_all <- purrr::map_chr(values_i, function(x) x$place) |>
+                paste(collapse = " ") |>
+                rtiddlywiki::split_field()
+            filter_place <- paste0("[[", place_all, "]]") |>
+                paste(collapse = " ")
+            tiddler_place <- rtiddlywiki::get_tiddlers(filter_place)
+            tiddler_place <- tiddler_place |>
+                purrr::map_df(function(x) {
+                    tibble::tibble(
+                        place = x$title,
+                        point = x$point
+                    )
+                }) |>
+                tidyr::separate(col = "point", into = c("latitude", "longitude"), sep = ", +") |>
+                dplyr::mutate(latitude = as.numeric(.data$latitude),
+                              longitude = as.numeric(.data$longitude))
+            k <- 1
+            for (k in seq(along = values_i)) {
+                place_name_k <- values_i[[k]]$place |>
+                    rtiddlywiki::split_field()
+                if (length(place_name_k) != 1) {
+                    stop("Only require a single place for ", values_i[[k]]$title)
+                }
+                pos <- tiddler_place$place %in% place_name_k
+                if (sum(pos) != 1) {
+                    next
+                }
+
+                values_i[[k]]$latitude <- tiddler_place$latitude[pos]
+                values_i[[k]]$longitude <- tiddler_place$longitude[pos]
+            }
+
+        }
+
+
         # Store processed values
         res[[filter_tiddler$title]] <- values_i
     }
