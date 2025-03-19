@@ -63,11 +63,11 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
         # update extra values: category and subcategory
         j <- 1
         for (j in seq(along = values_i)) {
-            if (!is.null(filter_tiddler$category)) {
-                values_i[[j]]$category <- filter_tiddler$category
+            if (!is.null(filter_tiddler$group)) {
+                values_i[[j]]$group <- filter_tiddler$group
             }
-            if (!is.null(filter_tiddler$subcategory)) {
-                values_i[[j]]$subcategory <- filter_tiddler$subcategory
+            if (!is.null(filter_tiddler$crop)) {
+                values_i[[j]]$crop <- filter_tiddler$crop
             }
         }
         if (!standard_name) {
@@ -75,33 +75,36 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
             next
         }
         # Get standard name
-        groups <- purrr::map_chr(values_i, function(x) x$group) |> unique()
+        #groups <- purrr::map_chr(values_i, function(x) x$group) |> unique()
+        # We should assume each filter has the same group
+        group <- unique(filter_tiddler$group)
 
         # Get all groups from meta data
-        j <- 1
-        for (j in seq(along = groups)) {
+        # j <- 1
+        # for (j in seq(along = groups)) {
             # Obtain all tiddlers for this group
-            filter_j <- sprintf("[tag[%s]]", groups[j])
-            tiddler_j <- rtiddlywiki::get_tiddlers(filter_j)
-            names_j <- list()
-            # Split aka field and loop through group tiddlers
-            m <- 1
-            for (m in seq(along = tiddler_j)) {
-                names_m <- c(tiddler_j[[m]]$title,
-                    rtiddlywiki::split_field(tiddler_j[[m]]$aka)) |>
-                    unique() |>
-                    tolower()
-                # match id with aka field
-                k <- 1
-                for (k in seq(along = values_i)) {
-                    # go to next if not find
-                    if (!(tolower(values_i[[k]]$id) %in% names_m)) {
-                        next
-                    }
+        filter_j <- sprintf("[tag[%s]]", group)
+        tiddler_j <- rtiddlywiki::get_tiddlers(filter_j)
+        names_j <- list()
+        # Split aka field and loop through group tiddlers
+        m <- 1
+        for (m in seq(along = tiddler_j)) {
+            names_m <- c(tiddler_j[[m]]$title,
+                rtiddlywiki::split_field(tiddler_j[[m]]$aka)) |>
+                unique() |>
+                tolower()
+            # match id with aka field
+            k <- 1
+            for (k in seq(along = values_i)) {
+                # go to next if not find
+                if (!(tolower(values_i[[k]]$id) %in% names_m)) {
+                    next
+                }
 
-                    # Assign values if find
-                    values_i[[k]]$standard_name <- tiddler_j[[m]]$title
-                    values_i[[k]]$preferred_name <- values_i[[k]]$standard_name
+                # Assign values if find
+                values_i[[k]]$standard_name <- tiddler_j[[m]]$title
+                values_i[[k]]$preferred_name <- values_i[[k]]$standard_name
+                if (group == "Variety") {
                     # Break if no apsim name
                     if (!apsim_name) {
                         break
@@ -118,7 +121,6 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
                         break
                     }
                     break
-
                 }
 
             }
@@ -141,11 +143,14 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
         res[[filter_tiddler$title]] <- values_i
     }
     if (as_tibble) {
+        system_fields <- c("revision", "bag", "creator", "modifier",
+                                 "modified", "created", "type", "text", "title")
         for (i in seq(along = res)) {
             # Convert retrieved tiddlers into a tibble format
-            res[[i]] <- tibble::tibble(repo = res[[i]]) |>
+            res_i <- tibble::tibble(repo = res[[i]]) |>
                 tidyr::unnest_wider("repo")
-
+            res_i <- res_i[,!(names(res_i) %in% system_fields)]
+            res[[i]] <- res_i
         }
     }
     return(res)

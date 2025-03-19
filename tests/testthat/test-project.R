@@ -8,8 +8,8 @@ test_that("tiddler", {
 
     # Test warning
     rtiddlywiki::put_tiddler("project2/filter/variety/wheat", text="", tags = c("Project Filter", "project2", "test"),
-                             fields = list(category = "variety",
-                                           subcategory = "wheat"))
+                             fields = list(group = "Variety",
+                                           crop = "wheat"))
 
     expect_warning(get_meta("project2"))
 
@@ -18,8 +18,8 @@ test_that("tiddler", {
     rtiddlywiki::put_tiddler("project1", text="", tags = c("Project", "test"))
     rtiddlywiki::put_tiddler("project1/filter", text="", tags = c("Project Filter", "project1", "test"),
                              fields = list(`filter` = "[tag[Project Meta]field:group[Variety]field:project[project1]]",
-                                           category = "variety",
-                                           subcategory = "wheat"))
+                                           group = "Variety",
+                                           crop = "wheat"))
 
 
     for (i in c(0, seq_len(10))) {
