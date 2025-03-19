@@ -7,6 +7,7 @@ test_that("tiddler", {
 
 
     # Test warning
+    #Inject test data
     rtiddlywiki::put_tiddler("project2/filter/variety/wheat", text="", tags = c("Project Filter", "project2", "test"),
                              fields = list(group = "Variety",
                                            crop = "wheat"))
@@ -16,7 +17,7 @@ test_that("tiddler", {
 
     # Test meta data
     rtiddlywiki::put_tiddler("project1", text="", tags = c("Project", "test"))
-    rtiddlywiki::put_tiddler("project1/filter", text="", tags = c("Project Filter", "project1", "test"),
+    rtiddlywiki::put_tiddler("project1/filter/variety", text="", tags = c("Project Filter", "project1", "test"),
                              fields = list(`filter` = "[tag[Project Meta]field:group[Variety]field:project[project1]]",
                                            group = "Variety",
                                            crop = "wheat"))
@@ -49,31 +50,70 @@ test_that("tiddler", {
                              fields = list(cultivar = "apsim_Variety2", crop = "Wheat"))
 
 
+    # Generate Place
+    for (i in seq_len(10)) {
+        id <- sprintf("Place %s", i)
+        id_aka <- c(sprintf("place%s", i))
+        rtiddlywiki::put_tiddler(id, text="", tags = c("Place", "test"),
+                                 fields = list(aka = id_aka, point = "-34, 147"))
+    }
+    for (i in c(0, seq_len(10))) {
+        id <- sprintf("place%s", i)
+        rtiddlywiki::put_tiddler(sprintf("project1/%s", id), text="", tags = c("Project Meta", "test"),
+                                 fields = list(group = "Place",
+                                               project = "project1",
+                                               id = id))
+    }
+
+    rtiddlywiki::put_tiddler("project1/filter/place", text="", tags = c("Project Filter", "project1", "test"),
+                             fields = list(`filter` = "[tag[Project Meta]field:group[Place]field:project[project1]]",
+                                           group = "Place"))
+
     # standard_name
 
     sname <- standard_name(paste0("variety", seq(1, 11)), "Variety")
     expect_equal(c(paste0("Variety ", seq(1, 10)), NA), sname)
-    meta <- get_meta("project1")
-    expect_equal(length(meta), 1)
-    expect_equal(nrow(meta[[1]]), 12)
-    expect_equal(meta[[1]]$id[2], "variety1")
-    expect_equal(meta[[1]]$group[2], "Variety")
-    expect_equal(meta[[1]]$standard_name[2], "Variety 1")
-    expect_equal(meta[[1]]$preferred_name[2], "Variety 1")
-    expect_equal(meta[[1]]$preferred_name[4], "variety11")
-    expect_equal(meta[[1]]$preferred_name[5], "Variety 2")
-    expect_equal(meta[[1]]$preferred_name[6], "Variety 3")
 
-    expect_equal(meta[[1]]$apsim_name[2], "apsim_Variety1")
-    expect_equal(meta[[1]]$apsim_name[5], "apsim_Variety2")
-    expect_equal(meta[[1]]$apsim_name[3], "variety10")
-    expect_equal(meta[[1]]$in_apsim[2], TRUE)
-    expect_equal(meta[[1]]$in_apsim[5], TRUE)
-    expect_equal(meta[[1]]$in_apsim[3], FALSE)
+    # Test meta
 
     meta <- get_meta("project1", as_tibble = FALSE)
-    expect_equal(length(meta), 1)
-    expect_equal(length(meta[[1]]), 12)
+
+    expect_equal(length(meta), 2)
+    meta_variety <- meta[["project1/filter/variety"]]
+    expect_equal(length(meta_variety), 12)
+
+
+    meta <- get_meta("project1")
+    expect_equal(length(meta), 2)
+
+    # Variety
+    meta_variety <- meta[["project1/filter/variety"]]
+    expect_equal(nrow(meta_variety), 12)
+    expect_equal(meta_variety$id[2], "variety1")
+    expect_equal(meta_variety$group[2], "Variety")
+    expect_equal(meta_variety$standard_name[2], "Variety 1")
+    expect_equal(meta_variety$preferred_name[2], "Variety 1")
+    expect_equal(meta_variety$preferred_name[4], "variety11")
+    expect_equal(meta_variety$preferred_name[5], "Variety 2")
+    expect_equal(meta_variety$preferred_name[6], "Variety 3")
+
+    expect_equal(meta_variety$apsim_name[2], "apsim_Variety1")
+    expect_equal(meta_variety$apsim_name[5], "apsim_Variety2")
+    expect_equal(meta_variety$apsim_name[3], "variety10")
+    expect_equal(meta_variety$in_apsim[2], TRUE)
+    expect_equal(meta_variety$in_apsim[5], TRUE)
+    expect_equal(meta_variety$in_apsim[3], FALSE)
+
+
+    # Place
+    meta_place <- meta$`project1/filter/place`
+    expect_equal(tibble::has_name(meta_place, "apsim_name"), FALSE)
+
+    expect_equal(meta_place$id[2], "place1")
+    expect_equal(meta_place$group[2], "Place")
+    expect_equal(meta_place$standard_name[2], "Place 1")
+    expect_equal(meta_place$preferred_name[2], "Place 1")
+    expect_equal(meta_place$preferred_name[4], "Place 2")
 
     # Clean tiddlers
     tiddlers <- rtiddlywiki::get_tiddlers("[tag[test]]")

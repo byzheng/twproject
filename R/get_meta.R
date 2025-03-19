@@ -104,6 +104,8 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
                 # Assign values if find
                 values_i[[k]]$standard_name <- tiddler_j[[m]]$title
                 values_i[[k]]$preferred_name <- values_i[[k]]$standard_name
+
+                # for variety group
                 if (group == "Variety") {
                     # Break if no apsim name
                     if (!apsim_name) {
@@ -133,10 +135,11 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
             if ((is.null(values_i[[k]]$preferred_name))) {
                 values_i[[k]]$preferred_name <- values_i[[k]]$id
             }
-
-            if ((is.null(values_i[[k]]$apsim_name))) {
-                values_i[[k]]$apsim_name <- values_i[[k]]$id
-                values_i[[k]]$in_apsim <- FALSE
+            if (group == "Variety") {
+                if ((is.null(values_i[[k]]$apsim_name))) {
+                    values_i[[k]]$apsim_name <- values_i[[k]]$id
+                    values_i[[k]]$in_apsim <- FALSE
+                }
             }
         }
         # Store processed values
