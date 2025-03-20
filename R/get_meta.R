@@ -154,7 +154,8 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
                 purrr::map_df(function(x) {
                     tibble::tibble(
                         place = x$title,
-                        point = x$point
+                        point = x$point,
+                        weather_station = x$`weather-station`
                     )
                 }) |>
                 tidyr::separate(col = "point", into = c("latitude", "longitude"), sep = ", +") |>
@@ -174,6 +175,9 @@ get_meta <- function(project, as_tibble = TRUE, standard_name = TRUE,
 
                 values_i[[k]]$latitude <- tiddler_place$latitude[pos]
                 values_i[[k]]$longitude <- tiddler_place$longitude[pos]
+                if (tibble::has_name(tiddler_place, "weather_station")) {
+                    values_i[[k]]$weather_station <- tiddler_place$weather_station[pos]
+                }
             }
 
         }

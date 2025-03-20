@@ -56,8 +56,10 @@ test_that("tiddler", {
     for (i in seq_len(10)) {
         id <- sprintf("Place %s", i)
         id_aka <- c(sprintf("place%s", i))
+        id_weather <- c(sprintf("ppd/%s", i))
         rtiddlywiki::put_tiddler(id, text="", tags = c("Place", "test"),
                                  fields = list(aka = id_aka,
+                                               `weather-station` = id_weather,
                                                point = paste(latitude + i, longitude + i, sep = ", ")))
     }
     for (i in c(0, seq_len(10))) {
@@ -125,6 +127,8 @@ test_that("tiddler", {
     expect_equal(meta_place$longitude[1], NA_integer_)
     expect_equal(meta_place$latitude[2], -33)
     expect_equal(meta_place$longitude[2], 148)
+    expect_equal(meta_place$weather_station[1], NA_character_)
+    expect_equal(meta_place$weather_station[2], "ppd/1")
 
 
     # Clean tiddlers
