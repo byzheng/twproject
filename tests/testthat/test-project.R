@@ -83,6 +83,11 @@ test_that("tiddler", {
     sname <- standard_name(paste0("variety", seq(1, 11)), "Variety")
     expect_equal(c(paste0("Variety ", seq(1, 10)), NA), sname)
 
+    # APSIM name
+    apsim_names <- standard_name(paste0("variety", seq(1, 11)), "Variety", is_apsim_name = TRUE)
+    expect_equal(class(apsim_names), "data.frame")
+    expect_equal(c(paste0("apsim_Variety", seq(1, 2)), rep(NA, 9)), apsim_names$apsim_name)
+
     # Test meta
 
     meta <- get_meta("project1", as_tibble = FALSE)

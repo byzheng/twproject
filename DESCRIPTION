@@ -11,6 +11,8 @@ LazyData: true
 URL: https://twproject.bangyou.me/,
     https://github.com/byzheng/twproject
 BugReports: https://github.com/byzheng/twproject/issues
+Depends:
+    R (> 4.1.0)
 Imports:
     rtiddlywiki,
     here,
@@ -19,7 +21,7 @@ Imports:
     tibble,
     purrr,
     rlang
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0),
     processx

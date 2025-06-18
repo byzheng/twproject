@@ -4,15 +4,18 @@
 \alias{standard_name}
 \title{Get standard names}
 \usage{
-standard_name(names, group)
+standard_name(names, group, is_apsim_name = FALSE)
 }
 \arguments{
-\item{names}{A charactor vector for names}
+\item{names}{A character vector for names}
 
 \item{group}{Group of standard names}
+
+\item{is_apsim_name}{whether to return names only if group is "Variety".}
 }
 \value{
-A vector for standard name
+A vector for standard name if is_apsim_name is FALSE, but a data.frame of
+standard_name and apsim_name if is_apsim_name is TRUE.
 }
 \description{
 Get standard names
